@@ -1,0 +1,64 @@
+#/*==========================================================================*
+# *    Copyright(c) 2008-2012,  Co., Ltd.
+# *                     ALL RIGHTS RESERVED
+# *
+# *  PRODUCT  : RTU
+# *
+# *  FILENAME : Config.in
+# *  CREATOR  : Song                DATE: 2008-09-10 14:58
+# *  VERSION  : V1.00
+# *  PURPOSE  : Defines the variables for the Makefiles
+# *
+# *  HISTORY  :
+# *
+# *==========================================================================*/
+
+
+TARGET = arm
+#TARGET = 
+MAKE_VERSION = debug
+LOCAL_LANGUAGE = zh
+CODE_VERSION = V0.01
+
+
+#set GNU cross-tools
+ifeq ($(TARGET), arm)
+	CROSS_TOOLS = arm-linux-
+else 
+	CROSS_TOOLS = 
+endif
+CC = $(CROSS_TOOLS)gcc
+LD = $(CROSS_TOOLS)ld
+AR = $(CROSS_TOOLS)ar
+RANLIB=$(CROSS_TOOLS)ranlib
+STRIP= $(CROSS_TOOLS)strip
+
+#link flags
+LDFLAGS += -lpthread -lrt -lm -L$(SOURCE_DIR)/lib/
+
+#Compile flags: Add the debug flag
+ifeq ($(MAKE_VERSION), debug)
+	CFLAGS  += -g -ggdb -D_DEBUG=1
+	LDFLAGS += -Wl,-Map,$@.map
+else
+	CFLAGS  += -DNDEBUG #-o2
+	LDFLAGS += -Wl,-s
+	
+endif
+ifeq ($(MAKE_VERSION), debug)
+	STRIP= $(CROSS_TOOLS)strip -o -s
+endif
+
+CFLAGS += -W -Wall -Wstrict-prototypes -Wundef -Wunknown-pragmas -Wunreachable-code 
+CFLAGS += -Wfloat-equal -W -Wimplicit
+#CFLAGS += -Werror #treat warning as error
+CFLAGS += -I$(SOURCE_DIR)/include  
+
+#public dependent head files.
+#PUBINCS = $(SOURCE_DIR)/include/public.h
+
+#public librarys
+PUBLIBS = -L /home/lizh/mnt/yaffs/sqlite3/lib -lsqlite3
+
+
+
